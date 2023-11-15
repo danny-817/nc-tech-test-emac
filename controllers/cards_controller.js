@@ -2,6 +2,7 @@ const express = require("express");
 
 const { retrieveAllCards } = require("../models/cards_model");
 const { retrieveAllTemplates } = require("../models/templates_model");
+const { getImageUrl } = require("../utilities/getImageUrl");
 
 async function getAllCards(req, res, next) {
   try {
