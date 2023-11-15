@@ -1,14 +1,31 @@
 import * as request from "supertest";
 import { app } from "../server";
 
+describe("non existant/misspelt path", () => {
+  test("return a 404 error code and 'url not found' when given a non-existant url", () => {
+    return request(app)
+      .get("/badpath")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("url not found");
+      });
+  });
+  test("return a 404 error code and 'url not found' when the url is misspelt", () => {
+    return request(app)
+      .get("/card")
+      .expect(404)
+      .expect(({ body }) => {
+        expect(body.msg).toBe("url not found");
+      });
+  });
+});
+
 describe("/cards", () => {
   test("GET: responds with an array of all cards on file", () => {
     return request(app)
       .get("/cards")
       .expect(200)
       .then(({ body }) => {
-        console.log(body, "response in test");
-
         expect(body.length).toEqual(3);
       });
   });
@@ -18,9 +35,9 @@ describe("/cards", () => {
       .expect(200)
       .then(({ body }) => {
         body.forEach((card) => {
-          expect(card).toHaveProperty("title");
-          expect(card).toHaveProperty("imageUrl");
-          expect(card).toHaveProperty("card_id");
+          expect(card).toHaveProperty("title", expect.any(String));
+          expect(card).toHaveProperty("imageUrl", expect.any(String));
+          expect(card).toHaveProperty("card_id", expect.any(String));
         });
       });
   });
