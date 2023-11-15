@@ -26,7 +26,8 @@ describe("/cards", () => {
       .get("/cards")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toEqual(3);
+        expect(typeof body).toBe("object");
+        expect(body).toHaveLength(3);
       });
   });
   test("GET: all items in the returned array have the expected keys", () => {
@@ -43,21 +44,13 @@ describe("/cards", () => {
   });
 });
 
-/*
-title from cards.json( as "title")
-
-imageUrl from templates.json ( pages[0].templateId then find that template in tempaltes.json)
-
-card_id from cards.json (as "id")
-*/
-
-// test("returns matching card title", async () => {
-//   const response = await request(app).get("/cards/card001");
-
-//   expect(response.status).toBe(200);
-//   expect(response.body).toEqual(
-//     expect.objectContaining({
-//       title: "card 1 title",
-//     })
-//   );
-// });
+describe("/cards/:cardId", () => {
+  test("GET: responds with a single card corresponding to the given id", () => {
+    return request(app)
+      .get("/cards/card001")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveLength(1);
+      });
+  });
+});
