@@ -6,6 +6,8 @@ const {
   getSingleCard,
 } = require("../controllers/cards_controller");
 
+app.use(express.json());
+
 app.set("json spaces", 2);
 
 app.get("/cards", getAllCards);
