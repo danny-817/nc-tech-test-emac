@@ -45,12 +45,33 @@ describe("/cards", () => {
 });
 
 describe("/cards/:cardId", () => {
-  test("GET: responds with a single card corresponding to the given id", () => {
+  test("GET: responds with a single card object ", () => {
     return request(app)
       .get("/cards/card001")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toHaveLength(1);
+        expect(typeof body).toBe("object");
+      });
+  });
+  test("GET: the id on the returned object matches the given ID", () => {
+    return request(app)
+      .get("/cards/card002")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("id", "card002");
+      });
+  });
+  test("GET: the returned object has the correct keys", () => {
+    return request(app)
+      .get("/cards/card003")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("title", expect.any(String));
+        expect(body).toHaveProperty("imageUrl", expect.any(String));
+        expect(body).toHaveProperty("card_id", expect.any(String));
+        expect(body).toHaveProperty("base_price", expect.any(Number));
+        expect(body).toHaveProperty("availableSizes", expect.any(Array));
+        expect(body).toHaveProperty("pages", expect.any(Array));
       });
   });
 });
