@@ -29,6 +29,11 @@ async function getAllCards(req, res, next) {
 async function getSingleCard(req, res, next) {
   try {
     const cardId = req.params.cardId;
+    const cardIdRegex = /^card\d{3}$/;
+    const cardIdCheck = cardIdRegex.test(cardId);
+    if (!cardIdCheck) {
+      res.status(400).send({ msg: "Invalid card ID" });
+    }
     const allCards = await retrieveAllCards();
     const singleCard = allCards.find((card) => cardId === card.id);
     if (!singleCard) {
