@@ -74,4 +74,20 @@ describe("/cards/:cardId", () => {
         expect(body).toHaveProperty("pages", expect.any(Array));
       });
   });
+  test("GET: when a non existant but valid card ID is requested the user is informed", () => {
+    return request(app)
+      .get("/cards/card005")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No card exists under this ID");
+      });
+  });
+  test("GET: when an invalid card ID is used the user is informed", () => {
+    return request(app)
+      .get("/cards/cardID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid card ID");
+      });
+  });
 });
