@@ -26,7 +26,8 @@ describe("/cards", () => {
       .get("/cards")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toEqual(3);
+        expect(typeof body).toBe("object");
+        expect(body).toHaveLength(3);
       });
   });
   test("GET: all items in the returned array have the expected keys", () => {
@@ -43,21 +44,50 @@ describe("/cards", () => {
   });
 });
 
-/*
-title from cards.json( as "title")
-
-imageUrl from templates.json ( pages[0].templateId then find that template in tempaltes.json)
-
-card_id from cards.json (as "id")
-*/
-
-// test("returns matching card title", async () => {
-//   const response = await request(app).get("/cards/card001");
-
-//   expect(response.status).toBe(200);
-//   expect(response.body).toEqual(
-//     expect.objectContaining({
-//       title: "card 1 title",
-//     })
-//   );
-// });
+describe("/cards/:cardId", () => {
+  test("GET: responds with a single card object ", () => {
+    return request(app)
+      .get("/cards/card001")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+      });
+  });
+  test("GET: the id on the returned object matches the given ID", () => {
+    return request(app)
+      .get("/cards/card002")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("id", "card002");
+      });
+  });
+  test("GET: the returned object has the correct keys", () => {
+    return request(app)
+      .get("/cards/card003")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("title", expect.any(String));
+        expect(body).toHaveProperty("imageUrl", expect.any(String));
+        expect(body).toHaveProperty("card_id", expect.any(String));
+        expect(body).toHaveProperty("base_price", expect.any(Number));
+        expect(body).toHaveProperty("availableSizes", expect.any(Array));
+        expect(body).toHaveProperty("pages", expect.any(Array));
+      });
+  });
+  test("GET: when a non existant but valid card ID is requested the user is informed", () => {
+    return request(app)
+      .get("/cards/card005")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No card exists under this ID");
+      });
+  });
+  test("GET: when an invalid card ID is used the user is informed", () => {
+    return request(app)
+      .get("/cards/cardID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid card ID");
+      });
+  });
+});
